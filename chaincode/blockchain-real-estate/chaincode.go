@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate/lib"
 	"github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate/routers"
 	"github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate/utils"
-	"time"
 )
 
 type BlockChainRealEstate struct {
@@ -30,7 +31,7 @@ func (t *BlockChainRealEstate) Init(stub shim.ChaincodeStubInterface) pb.Respons
 		"4b227777d4dd",
 		"ef2d127de37b",
 	}
-	var userNames = [6]string{"管理员", "①号业主", "②号业主", "③号业主", "④号业主", "⑤号业主"}
+	var userNames = [6]string{"管理员", "①号用户", "②号用户", "③号用户", "④号用户", "⑤号用户"}
 	var balances = [6]float64{0, 5000000, 5000000, 5000000, 5000000, 5000000}
 	//初始化账号数据
 	for i, val := range accountIds {
@@ -75,6 +76,14 @@ func (t *BlockChainRealEstate) Invoke(stub shim.ChaincodeStubInterface) pb.Respo
 		return routers.QueryDonatingListByGrantee(stub, args)
 	case "updateDonating":
 		return routers.UpdateDonating(stub, args)
+	case "createOrder":
+		return routers.CreateOrder(stub, args)
+	case "queryOrderList":
+		return routers.QueryOrderList(stub, args)
+	case "updateOrder":
+		return routers.UpdateOrder(stub, args)
+	case "queryOrderHistory":
+		return routers.QueryOrderHistory(stub, args)
 	default:
 		return shim.Error(fmt.Sprintf("没有该功能: %s", funcName))
 	}

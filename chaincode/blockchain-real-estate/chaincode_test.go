@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate/lib"
-	"testing"
 )
 
 func initTest(t *testing.T) *shim.MockStub {
@@ -25,10 +26,20 @@ func checkInit(t *testing.T, stub *shim.MockStub, args [][]byte) {
 	}
 }
 
+func byteToString(input [][]byte) []string {
+	var output []string
+	for _, v := range input {
+		output = append(output, string(v))
+	}
+	return output
+}
+
 func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) pb.Response {
 	res := stub.MockInvoke("1", args)
+	argsString := byteToString(args)
 	if res.Status != shim.OK {
-		fmt.Println("Invoke", args, "failed", string(res.Message))
+		fmt.Println("Error : Invoke Failed ", "agrgs : ", argsString, string(res.Message))
+		// fmt.Println("Invoke", argsString, "failed", string(res.Message))
 		t.FailNow()
 	}
 	return res
@@ -384,4 +395,95 @@ func Test_Donating(t *testing.T) {
 		string(checkInvoke(t, stub, [][]byte{
 			[]byte("queryRealEstateList"),
 		}).Payload)))
+}
+
+//手动创建一些订单
+func checkOrders(t *testing.T, stub *shim.MockStub) {
+
+	checkInvoke(t, stub, [][]byte{
+		[]byte("createOrder"),
+		[]byte("5feceb66ffc8"), //操作人
+		[]byte("6b86b273ff34"), //owner
+		[]byte("nuaaLab41601"), //orderId
+		[]byte("toBeStarted"),  //status
+	})
+	checkInvoke(t, stub, [][]byte{
+		[]byte("createOrder"),
+		[]byte("5feceb66ffc8"), //操作人
+		[]byte("6b86b273ff34"), //owner
+		[]byte("nuaaLab41602"), //orderId
+		[]byte("inProgress"),   //status
+	})
+	checkInvoke(t, stub, [][]byte{
+		[]byte("createOrder"),
+		[]byte("5feceb66ffc8"), //操作人
+		[]byte("d4735e3a265e"), //owner
+		[]byte("nuaaLab41603"), //orderId
+		[]byte("done"),         //status
+	})
+}
+
+//zzy 测试创建新的订单
+func Test_OrderCURD(t *testing.T) {
+	stub := initTest(t)
+	//创建一些订单
+	checkOrders(t, stub)
+
+	//查询所有订单
+	fmt.Println(fmt.Sprintf("1、测试获取所有订单数据\n%s",
+		string(checkInvoke(t, stub, [][]byte{
+			[]byte("queryOrderList"),
+		}).Payload)))
+
+	//查询用户1拥有的订单
+	fmt.Println(fmt.Sprintf("2、测试获取指定用户所有订单数据\n%s",
+		string(checkInvoke(t, stub, [][]byte{
+			[]byte("queryOrderList"),
+			[]byte("6b86b273ff34"),
+		}).Payload)))
+
+	//查询指定订单ID
+	fmt.Println(fmt.Sprintf("3、测试获取指定订单数据\n%s",
+		string(checkInvoke(t, stub, [][]byte{
+			[]byte("queryOrderList"),
+			[]byte("6b86b273ff34"),
+			[]byte("nuaaLab41602"),
+		}).Payload)))
+
+	fmt.Println(fmt.Sprintf("4、测试更新指定订单数据\n%s",
+		string(checkInvoke(t, stub, [][]byte{
+			[]byte("updateOrder"),
+			[]byte("6b86b273ff34"), //操作人
+			[]byte("6b86b273ff34"), //owner
+			[]byte("nuaaLab41601"), //orderId
+			[]byte("inProgress"),   //status
+		}).Payload)))
+
+	// fmt.Println("5、测试获取指定订单历史数据")
+	// fmt.Printf("%s\n", string(checkInvoke(t, stub, [][]byte{
+	// 	[]byte("queryOrderHistory"),
+	// 	[]byte("5feceb66ffc8"), //操作人
+	// 	[]byte("6b86b273ff34"), //owner
+	// 	[]byte("nuaaLab41601"), //orderId
+	// }).Payload))
+
+	fmt.Println("5、测试更新指定订单数据")
+	fmt.Printf("%s\n", string(checkInvoke(t, stub, [][]byte{
+		[]byte("updateOrder"),
+		[]byte("5feceb66ffc8"), //操作人
+		[]byte("6b86b273ff34"), //owner
+		[]byte("nuaaLab41601"), //orderId
+		[]byte("inProgress"),   //status
+	}).Payload))
+
+	//创建已有订单
+	fmt.Println("6、测试创建已有订单数据")
+	fmt.Printf("%s\n", string(checkInvoke(t, stub, [][]byte{
+		[]byte("createOrder"),
+		[]byte("5feceb66ffc8"), //操作人
+		[]byte("d4735e3a265e"), //owner
+		[]byte("nuaaLab41603"), //orderId
+		[]byte("done"),         //status
+	}).Payload))
+
 }

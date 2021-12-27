@@ -79,6 +79,7 @@ type DonatingGrantee struct {
 	Donating   Donating `json:"donating"`   //捐赠对象
 }
 
+//types of object key
 const (
 	AccountKey         = "account-key"
 	RealEstateKey      = "real-estate-key"
@@ -86,4 +87,22 @@ const (
 	SellingBuyKey      = "selling-buy-key"
 	DonatingKey        = "donating-key"
 	DonatingGranteeKey = "donating-grantee-key"
+	OrderKey           = "order-key"
 )
+
+//Order 订单
+type Order struct {
+	Owner   string `json:"owner"` //所属方（账号id）
+	OrderId string `json:"orderId"`
+	Status  string `json:status`
+}
+
+// SellingStatusConstant 销售状态
+var OrderStatusConstant = func() map[string]string {
+	return map[string]string{
+		"toBeStarted": "未开始",
+		"inProgress":  "进行中",
+		"delivery":    "交付中",
+		"done":        "已完成",
+	}
+}

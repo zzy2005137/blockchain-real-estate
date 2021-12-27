@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -108,3 +109,4 @@ func GetStateByPartialCompositeKeys2(stub shim.ChaincodeStubInterface, objectTyp
 	}
 	return results, nil
 }
+
