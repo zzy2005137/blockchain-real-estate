@@ -35,12 +35,21 @@ docker exec cli peer channel create -o orderer.blockchainrealestate.com:7050 -c 
 
 echo "五、节点加入通道"
 docker exec cli peer channel join -b assetschannel.block
+#peer0.org0 加入
+docker exec cli0 peer channel fetch 0 assetschannel.block -o orderer.blockchainrealestate.com:7050 -c assetschannel
+docker exec cli0 peer channel join -b assetschannel.block 
+#peer0.org2 加入
+docker exec cli2 peer channel fetch 0 assetschannel.block -o orderer.blockchainrealestate.com:7050 -c assetschannel
+docker exec cli2 peer channel join -b assetschannel.block 
+
 
 # -n 是链码的名字，可以自己随便设置
 # -v 就是版本号，就是composer的bna版本
 # -p 是目录，目录是基于cli这个docker里面的$GOPATH相对的
 echo "六、链码安装"
 docker exec cli peer chaincode install -n blockchain-real-estate -v 1.0.0 -l golang -p github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate
+docker exec cli0 peer chaincode install -n blockchain-real-estate -v 1.0.0 -l golang -p github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate
+docker exec cli2 peer chaincode install -n blockchain-real-estate -v 1.0.0 -l golang -p github.com/togettoyou/blockchain-real-estate/chaincode/blockchain-real-estate
 
 #-n 对应前文安装链码的名字 其实就是composer network start bna名字
 #-v 为版本号，相当于composer network start bna名字@版本号
@@ -60,4 +69,9 @@ sleep 5
 
 # 进行链码交互，验证链码是否正确安装及区块链网络能否正常工作
 echo "八、验证查询账户信息"
+echo "通过peer1查询"
 docker exec cli peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["queryAccountList"]}'
+echo "通过peer0查询"
+docker exec cli0 peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["queryAccountList"]}'
+echo "通过peer2查询"
+docker exec cli2 peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["queryAccountList"]}'

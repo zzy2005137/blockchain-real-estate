@@ -1,6 +1,5 @@
-version: '2'
+version: "2"
 services:
-
   orderer.blockchainrealestate.com:
     container_name: orderer.blockchainrealestate.com
     image: hyperledger/fabric-orderer:1.4.2
@@ -31,6 +30,8 @@ services:
       - CORE_PEER_ID=peer0.org0.blockchainrealestate.com
       - CORE_PEER_LOCALMSPID=Org0MSP
       - CORE_PEER_ADDRESS=peer0.org0.blockchainrealestate.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org0.blockchainrealestate.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org0.blockchainrealestate.com:8051
     ports:
       - 7051:7051 # grpc服务端口
       - 7053:7053 # eventhub端口
@@ -114,12 +115,16 @@ services:
       - CORE_PEER_ID=peer0.org2.blockchainrealestate.com
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_ADDRESS=peer0.org2.blockchainrealestate.com:7051
+      # 加入通道测试
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.blockchainrealestate.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.blockchainrealestate.com:8051
     ports:
       - 47051:7051
       - 47053:7053
     volumes:
       - /var/run/:/host/var/run/
       - ./crypto-config/peerOrganizations/org2.blockchainrealestate.com/peers/peer0.org2.blockchainrealestate.com:/etc/hyperledger/peer
+
     depends_on:
       - orderer.blockchainrealestate.com
 
@@ -143,6 +148,24 @@ services:
     depends_on:
       - orderer.blockchainrealestate.com
 
+  cli0:
+    container_name: cli0
+    image: hyperledger/fabric-tools:1.4.2
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org0.blockchainrealestate.com:7051
+      - CORE_PEER_LOCALMSPID=Org0MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/users/Admin@org0.blockchainrealestate.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: /bin/bash
+    volumes:
+      - ./../chaincode:/opt/gopath/src/github.com/togettoyou/blockchain-real-estate/chaincode # 链码路径注入
+      - ./config:/etc/hyperledger/config
+      - ./crypto-config/peerOrganizations/org0.blockchainrealestate.com/:/etc/hyperledger/peer
+
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:1.4.2
@@ -160,3 +183,21 @@ services:
       - ./../chaincode:/opt/gopath/src/github.com/togettoyou/blockchain-real-estate/chaincode # 链码路径注入
       - ./config:/etc/hyperledger/config
       - ./crypto-config/peerOrganizations/org1.blockchainrealestate.com/:/etc/hyperledger/peer
+
+  cli2:
+    container_name: cli2
+    image: hyperledger/fabric-tools:1.4.2
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org2.blockchainrealestate.com:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/users/Admin@org2.blockchainrealestate.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: /bin/bash
+    volumes:
+      - ./../chaincode:/opt/gopath/src/github.com/togettoyou/blockchain-real-estate/chaincode # 链码路径注入
+      - ./config:/etc/hyperledger/config
+      - ./crypto-config/peerOrganizations/org2.blockchainrealestate.com/:/etc/hyperledger/peer

@@ -400,6 +400,8 @@ func Test_Donating(t *testing.T) {
 //手动创建一些订单
 func checkOrders(t *testing.T, stub *shim.MockStub) {
 
+	fmt.Println("0. 创建部分新订单")
+	fmt.Println("============================")
 	checkInvoke(t, stub, [][]byte{
 		[]byte("createOrder"),
 		[]byte("5feceb66ffc8"), //操作人
