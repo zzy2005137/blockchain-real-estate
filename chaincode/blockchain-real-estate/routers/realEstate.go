@@ -18,7 +18,7 @@ func CreateRealEstate(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 		return shim.Error("参数个数不满足")
 	}
 	accountId := args[0] //accountId用于验证是否为管理员
-	proprietor := args[1]
+	proprietor := args[1] 
 	totalArea := args[2]
 	livingSpace := args[3]
 	if accountId == "" || proprietor == "" || totalArea == "" || livingSpace == "" {

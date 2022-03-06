@@ -76,6 +76,7 @@ func (t *BlockChainRealEstate) Invoke(stub shim.ChaincodeStubInterface) pb.Respo
 		return routers.QueryDonatingListByGrantee(stub, args)
 	case "updateDonating":
 		return routers.UpdateDonating(stub, args)
+	//========== order function test ==============
 	case "createOrder":
 		return routers.CreateOrder(stub, args)
 	case "queryOrderList":
