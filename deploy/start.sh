@@ -93,3 +93,4 @@ docker exec cli2 peer chaincode invoke -C assetschannel -n blockchain-real-estat
 
 #get history 
 # docker exec cli peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["queryOrderHistory","d4735e3a265e","d4735e3a265e","001"]}'
+

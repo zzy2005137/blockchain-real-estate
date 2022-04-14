@@ -8,7 +8,7 @@
 
 
 #create order
-# docker exec cli peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["createOrder","5feceb66ffc8","d4735e3a265e","001","toBeStarted"]}'  #管理员id, owner, orderId, status
+# docker exec cli peer chaincode invoke -C assetschannel -n blockchain-real-estate -c '{"Args":["createOrder","5feceb66ffc8","d4735e3a265e","002","toBeStarted"]}'  #管理员id, owner, orderId, status
 
 # query orderList 
 echo "查询所有订单信息"

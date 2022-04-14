@@ -21,10 +21,10 @@ func CreateOrder(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("参数个数不满足")
 	}
 	accountId := args[0] //accountId用于验证是否为管理员
-	owner := args[1]     //order owner 
-	orderId := args[2]   //order id 
+	owner := args[1]     //order owner
+	orderId := args[2]   //order id
 	statusMap := lib.OrderStatusConstant()
-	status := statusMap[args[3]]  //order status
+	status := statusMap[args[3]] //order status
 
 	if accountId == "" || orderId == "" || owner == "" || status == "" {
 		return shim.Error("参数存在空值")
@@ -155,8 +155,8 @@ func QueryOrderHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		return shim.Error("参数个数不满足")
 	}
 	accountId := args[0] //accountId
-	owner := args[1]     //owner 
-	orderId := args[2]   //id 
+	owner := args[1]     //owner
+	orderId := args[2]   //id
 
 	if accountId == "" || orderId == "" || owner == "" {
 		return shim.Error("参数存在空值")
