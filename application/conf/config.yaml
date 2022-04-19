@@ -103,10 +103,10 @@ orderers:
       fail-fast: false
       allow-insecure: true # 非tls连接
 
-指定peer
+# 指定peer
 peers:
   peer0.org1.blockchainrealestate.com:
-    url: 127.0.0.:27051
+    url: 127.0.0.1:27051
     eventUrl: 127.0.0.1:27053
 
     # grpc配置
